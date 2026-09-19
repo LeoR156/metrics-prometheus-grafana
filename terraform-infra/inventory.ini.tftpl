@@ -1,0 +1,5 @@
+[servers]
+general_server
+%{ for host in hosts ~}
+${host}
+%{ endfor ~}

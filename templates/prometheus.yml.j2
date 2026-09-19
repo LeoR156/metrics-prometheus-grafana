@@ -1,0 +1,23 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: "prometheus"
+    scrape_interval: 15s
+    basic_auth:
+      username: "{{ prom_admin_user }}"
+      password: "{{ prom_admin_password }}"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: "node_exporter"
+    basic_auth:
+      username: "{{ exporter_user }}"
+      password: "{{ exporter_password }}"
+    static_configs:
+{% for host in groups['servers'] %}
+      - targets: ["{{ hostvars[host]['ansible_host'] }}:9100"]
+        labels:
+          nodename: "{{ host }}"
+{% endfor %}
+

@@ -1,0 +1,24 @@
+[Unit]
+Description=Node Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=node_exporter
+Group=node_exporter
+Type=simple
+ExecStart=/usr/local/bin/node_exporter \
+    --web.config.file=/etc/node_exporter/web.yml
+
+# Контроль падений и перезапуск
+Restart=always
+RestartSec=5s
+
+# Ограничения безопасности процесса
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

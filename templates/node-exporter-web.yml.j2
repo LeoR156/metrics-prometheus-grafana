@@ -1,0 +1,2 @@
+basic_auth_users:
+  {{ exporter_user }}: "{{ exporter_password | password_hash('bcrypt') }}"

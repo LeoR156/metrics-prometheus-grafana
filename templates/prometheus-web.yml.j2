@@ -1,0 +1,2 @@
+basic_auth_users:
+  {{ prom_admin_user }}: "{{ prom_admin_password | password_hash('bcrypt') }}"

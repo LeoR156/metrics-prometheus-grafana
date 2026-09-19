@@ -1,0 +1,3 @@
+monitoring_dir: /opt/monitoring
+node_exporter_version: "1.12.1"
+node_exporter_arch: "amd64"
