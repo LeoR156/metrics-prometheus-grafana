@@ -8,7 +8,7 @@
 ### ☁️ Infrastructure-as-Code проект для автоматического развертывания кластера мониторинга с нуля. Позволяет за 5 минут поднять сервера в облаке и накатить на них метрики.
 
 ### Стек :hammer_and_wrench::
-* :building_construction: __terraform Terraform v1.16.2 on linux_amd64 - для создания ВМ в облаке Yandex Cloud.__
+* :building_construction: __Terraform v1.16.2 on linux_amd64 - для создания ВМ в облаке Yandex Cloud.__
 * :rocket: __ansible [core 2.20.1] - для автоматической установки нужных компонентов и накатки конфигураций.__
 * :whale: __docker - для изоляции сервисов и запуска на любых машинах.__
 * :memo: __prometheus и node exporters - для опроса и получения метрик с целевых серверов.__
