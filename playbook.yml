@@ -2,10 +2,6 @@
 - name: Deploy Monitoring on general_server
   hosts: general_server
   become: yes
-  vars_files:
-    - group_vars/all/vars.yml
-    - group_vars/all/vault.yml
-
   tasks:
     - name: Создание системного юзера
       ansible.builtin.user:
@@ -69,22 +65,12 @@
 - name: Deploy Exporter on other servers
   hosts: all
   become: yes
-  vars_files:
-    - group_vars/all/vars.yml
-    - group_vars/all/vault.yml
-
   tasks:
     - name: Создание системного юзера
       ansible.builtin.user:
         name: metrics
         state: present
         shell: /usr/sbin/nologin
-
-    - name: Установить понятное имя хоста с индексом
-      ansible.builtin.hostname:
-        name: "node-{{ ansible_play_hosts.index(inventory_hostname) }}"
-      when: ansible_play_hosts.index(inventory_hostname) > 0
-      notify: restart node-exporter
 
     - name: Создать директории для проекта
       ansible.builtin.file:

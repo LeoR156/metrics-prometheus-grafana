@@ -14,21 +14,21 @@ resource "yandex_vpc_subnet" "main_subnet" {
 }
 
 resource "yandex_compute_instance" "server" {
-  count = 5
+  count = var.instance_count
 
   name        = "server_${count.index + 1}"
   platform_id = "standard-v3"
   zone        = "ru-central1-a"
 
   resources {
-    cores  = 2
-    memory = 2
+    cores  = var.cores
+    memory = var.memory
   }
 
   boot_disk {
     initialize_params {
       image_id = data.yandex_compute_image.ubuntu.id
-      size     = 15
+      size     = var.size
     }
   }
 
@@ -38,7 +38,12 @@ resource "yandex_compute_instance" "server" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/ssh-key-1789658954721.pub")}"
+    ssh-keys = "ubuntu:${file(pathexpand(var.key))}"
+    user-data = <<-EOF
+      #!/bin/bash
+      echo "PasswordAuthentication no" > /etc/ssh/sshd_config.d/01-disable-pw.conf
+      systemctl reload ssh
+    EOF
   }
 }
 
@@ -46,3 +51,4 @@ output "public_ips" {
   description = "Публичные IP адреса созданных серверов"
   value       = yandex_compute_instance.server[*].network_interface.0.nat_ip_address
 }
+
