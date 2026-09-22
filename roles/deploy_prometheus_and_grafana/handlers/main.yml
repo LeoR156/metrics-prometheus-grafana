@@ -1,4 +1,6 @@
 - name: Restart docker-compose
   community.docker.docker_compose_v2:
     project_src: "{{ monitoring_dir }}"
+    files:
+      - "{{ 'docker-compose-https.yml' if (domain is defined and domain | length > 0) else 'docker-compose.yml' }}"
     state: restarted

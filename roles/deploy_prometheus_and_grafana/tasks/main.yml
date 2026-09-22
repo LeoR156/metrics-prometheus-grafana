@@ -5,9 +5,16 @@
   ansible.builtin.import_role:
     name: install_Docker_and_utilities
 
+- name: Установка nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: true
+
 - name: Получаем сертификат, если его нет
   ansible.builtin.import_role:
     name: get_ssl_cert
+  when: domain is defined and domain | length > 0
 
 - name: Скопировать конфигурации сервисов
   ansible.builtin.template:
@@ -22,9 +29,38 @@
     - { src: "node-exporter-web.yml.j2", dest: "node-exporter-web.yml" }
     - { src: "grafana-datasource.yml.j2", dest: "grafana_provisioning/datasource.yml" }
     - { src: "docker-compose.yml.j2", dest: "docker-compose.yml" }
+    - { src: "docker-compose-https.yml.j2", dest: "docker-compose-https.yml" }
   notify: Restart docker-compose
 
-- name: Запустить Docker Compose
+- name: Скопировать конфиг nginx
+  ansible.builtin.template:
+    src: "nginx-https.conf.j2"
+    dest: "/etc/nginx/sites-available/nginx-https.conf"
+    mode: '0644'
+  when: domain is defined and domain | length > 0
+
+- name: Включить nginx конфиг (symlink)
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/nginx-https.conf
+    dest: /etc/nginx/sites-enabled/nginx-https.conf
+    state: link
+  when: domain is defined and domain | length > 0
+
+- name: Удалить дефолтную конфигурацию nginx
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Перезагрузить nginx
+  ansible.builtin.systemd:
+    name: nginx
+    enabled: true
+    state: reloaded
+  when: domain is defined and domain | length > 0
+
+- name: Запуск нужного compose-файла в зависимости от наличия domain
   community.docker.docker_compose_v2:
     project_src: "{{ monitoring_dir }}"
+    files:
+      - "{{ 'docker-compose-https.yml' if (domain is defined and domain | length > 0) else 'docker-compose.yml' }}"
     state: present
