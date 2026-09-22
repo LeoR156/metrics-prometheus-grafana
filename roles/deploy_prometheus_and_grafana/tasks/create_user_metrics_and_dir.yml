@@ -1,0 +1,17 @@
+---
+- name: Создание системного юзера
+  ansible.builtin.user:
+    name: metrics
+    state: present
+    shell: /usr/sbin/nologin
+
+- name: Создать директории для проекта
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: metrics
+    group: metrics
+  loop:
+    - "{{ monitoring_dir }}"
+    - "{{ monitoring_dir }}/grafana_provisioning"

@@ -1,0 +1,27 @@
+- name: Скопировать конфигурации сервисов
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ monitoring_dir }}/{{ item.dest }}"
+    mode: '0644'
+    owner: metrics
+    group: metrics
+  loop:
+    - { src: "prometheus.yml.j2", dest: "prometheus.yml" }
+    - { src: "prometheus-web.yml.j2", dest: "prometheus-web.yml" }
+    - { src: "node-exporter-web.yml.j2", dest: "node-exporter-web.yml" }
+    - { src: "grafana-datasource.yml.j2", dest: "grafana_provisioning/datasource.yml" }
+    - { src: "docker-compose.yml.j2", dest: "docker-compose.yml" }
+  notify: Restart docker-compose
+
+- name: Запустить Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ monitoring_dir }}"
+    state: present
+
+- name: Создание пользователя и директорий для метрик
+  ansible.builtin.import_tasks: create_user_metrics_and_dir.yml
+
+- name: Подключение роли установки Docker
+  ansible.builtin.import_role:
+    name: install_Docker_and_utilities
+

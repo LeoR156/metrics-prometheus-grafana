@@ -1,0 +1,14 @@
+- name: Создать системного пользователя для Node Exporter
+  ansible.builtin.user:
+    name: node_exporter
+    shell: /usr/sbin/nologin
+    system: true
+    create_home: false
+
+- name: Создать директорию под конкретную версию
+  ansible.builtin.file:
+    path: "/opt/node_exporter-{{ node_exporter_version }}"
+    state: directory
+    owner: node_exporter
+    group: node_exporter
+    mode: '0700'

@@ -1,0 +1,12 @@
+- name: Устанавливаем Docker и утилиты
+  ansible.builtin.apt:
+    name:
+      - docker.io
+      - docker-compose
+      - python3-pip
+      - ufw
+      - git
+      - htop
+      - rsync
+    state: present
+    update_cache: true
