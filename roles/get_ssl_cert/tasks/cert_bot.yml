@@ -1,0 +1,35 @@
+- name: Проверка наличия SSL сертификата
+  ansible.builtin.stat:
+    path: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+  register: cert_status
+
+- name: Собрать факты о сервисах
+  ansible.builtin.service_facts:
+  when: not cert_status.stat.exists
+
+- name: Остановить nginx (если запущен) перед получением сертификата
+  ansible.builtin.service:
+    name: nginx
+    state: stopped
+  when:
+    - not cert_status.stat.exists
+    - "'nginx.service' in services"
+    - "services['nginx.service'].state == 'running'"
+
+- name: Получение SSL сертификата через --standalone
+  ansible.builtin.command: >
+    certbot certonly --standalone
+    --non-interactive --agree-tos
+    -m "{{ email }}"
+    -d "{{ domain }}"
+  when: not cert_status.stat.exists
+  notify: Restart nginx
+
+- name: Запустить nginx
+  ansible.builtin.service:
+    name: nginx
+    state: started
+  when:
+    - not cert_status.stat.exists
+    - "'nginx.service' in services"
+    - "services['nginx.service'].state == 'running'"

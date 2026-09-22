@@ -1,3 +1,14 @@
+- name: Создание пользователя и директорий для метрик
+  ansible.builtin.import_tasks: create_user_metrics_and_dir.yml
+
+- name: Подключение роли установки Docker
+  ansible.builtin.import_role:
+    name: install_Docker_and_utilities
+
+- name: Получаем сертификат, если его нет
+  ansible.builtin.import_role:
+    name: get_ssl_cert
+
 - name: Скопировать конфигурации сервисов
   ansible.builtin.template:
     src: "{{ item.src }}"
@@ -17,11 +28,3 @@
   community.docker.docker_compose_v2:
     project_src: "{{ monitoring_dir }}"
     state: present
-
-- name: Создание пользователя и директорий для метрик
-  ansible.builtin.import_tasks: create_user_metrics_and_dir.yml
-
-- name: Подключение роли установки Docker
-  ansible.builtin.import_role:
-    name: install_Docker_and_utilities
-
