@@ -47,6 +47,9 @@ prom_admin_password: "ваш_пароль_для_prometheus"
 
 exporter_user: "ваш_логин_для_exporters"
 exporter_password: "ваш_пароль_для_exporters"
+
+email: "ваш_email"
+domen: "ваш_домен"
 ```
 * Примените изменения: `Ctrl + X`, `Y` и `Enter`.
 * Желательно применить шифрование командой: `ansible-vault encrypt vault.yml`. Придумайте и введите пароль. 
@@ -76,5 +79,5 @@ ansible_ssh_private_key_file: "путь_до_ssh_ключа"
 
 # Планы дальнейшего развития проекта:
 * Разбить таски по ролям Ansible. >>> сделано :white_check_mark:
-* Добавить возможность получения SSL-сертификата ради безопасного HTTPS соединения.
+* Добавить возможность получения SSL-сертификата ради безопасного HTTPS соединения. >>> сделано :white_check_mark:
 * Прикрутить Alertmanager + Telegram Notifications.
