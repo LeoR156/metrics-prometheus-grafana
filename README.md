@@ -75,6 +75,6 @@ ansible_ssh_private_key_file: "путь_до_ssh_ключа"
 ***
 
 # Планы дальнейшего развития проекта:
-* Разбить таски по ролям Ansible.
+* Разбить таски по ролям Ansible. >>> сделано :white_check_mark:
 * Добавить возможность получения SSL-сертификата ради безопасного HTTPS соединения.
 * Прикрутить Alertmanager + Telegram Notifications.
