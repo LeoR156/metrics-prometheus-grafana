@@ -1,0 +1,30 @@
+groups:
+  - name: main
+    rules:
+
+      # Алерт 1: Сервер недоступен
+      - alert: InstanceDown
+        expr: up == 0
+        for: 1m
+        annotations:
+          description: "{% raw %}Сервер {{ $labels.instance }} недоступен{% endraw %}"
+
+      # Алерт 2: Высокая загрузка CPU (любой сервер)
+      - alert: HighCpuLoad
+        expr: (1 - avg by(instance)(rate(node_cpu_seconds_total{mode="idle"}[1m]))) * 100 > 80
+        for: 1m
+        annotations:
+          description: >-
+            {% raw %}Сервер {{ $labels.instance }}: загрузка CPU {{ printf "%.1f" $value }}% (порог 80%){% endraw %}
+
+      # Алерт 3: Высокий трафик на general_server (сумма вход + выход > 10 МБ/с)
+      - alert: HighNetworkTraffic
+        expr: >-
+          sum by(instance) (
+            rate(node_network_receive_bytes_total{nodename="general_server", device!="lo"}[1m]) +
+            rate(node_network_transmit_bytes_total{nodename="general_server", device!="lo"}[1m])
+          ) / 1024 / 1024 > 10
+        for: 1m
+        annotations:
+          description: >-
+            {% raw %}general_server: суммарный трафик {{ printf "%.1f" $value }} МБ/с превысил порог 10 МБ/с{% endraw %}

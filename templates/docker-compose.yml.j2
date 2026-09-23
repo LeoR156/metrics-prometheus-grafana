@@ -7,6 +7,7 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./prometheus-web.yml:/etc/prometheus/prometheus-web.yml:ro
+      - ./alerts.rules.yml:/etc/prometheus/alerts.rules.yml:ro
       - prom_data:/prometheus
 
     command:
@@ -22,7 +23,7 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
-      - "127.0.0.1:3001:3000"
+      - "3001:3000"
     volumes:
       - ./grafana_provisioning/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro
       - grafana_data:/var/lib/grafana
@@ -36,6 +37,16 @@ services:
       
     depends_on:
       - prometheus
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    ports:
+      - "127.0.0.1:9093:9093"
+    restart: unless-stopped
+    
 
 volumes:
   prom_data:

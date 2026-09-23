@@ -30,6 +30,8 @@
     - { src: "grafana-datasource.yml.j2", dest: "grafana_provisioning/datasource.yml" }
     - { src: "docker-compose.yml.j2", dest: "docker-compose.yml" }
     - { src: "docker-compose-https.yml.j2", dest: "docker-compose-https.yml" }
+    - { src: "alertmanager.yml.j2", dest: "alertmanager.yml" }
+    - { src: "alerts.rules.yml.j2", dest: "alerts.rules.yml" }
   notify: Restart docker-compose
 
 - name: Скопировать конфиг nginx
