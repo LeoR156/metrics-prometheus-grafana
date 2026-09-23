@@ -1,20 +1,20 @@
 route:
   receiver: 'telegram'
+  group_by: ['alertname']
   group_wait: 30s
   repeat_interval: 1h
+
 receivers:
   - name: 'telegram'
     telegram_configs:
       - bot_token: "{{ telegram_bot_token }}"
         chat_id: {{ telegram_chat_id }}
-        message: >-
-          {% raw %}
-          {{ if eq .Status "firing" }}🔥{{ else }}✅{{ end }}
-          *{{ .GroupLabels.alertname }}*
-          
-          {{ range .Alerts }}
+        parse_mode: "Markdown"
+        message: |-
+          {% raw %}{{ if eq .Status "firing" }}🔥 *{{ .GroupLabels.alertname }}*{{ else }}✅ *{{ .GroupLabels.alertname }} — resolved*{{ end }}
+
+          {{ range .Alerts -}}
           *Сервер:* `{{ .Labels.instance }}`
-          *Статус:* {{ .Status }}
           *Описание:* {{ .Annotations.description }}
-          {{ end }}
-          {% endraw %}
+
+          {{ end }}{% endraw %}
