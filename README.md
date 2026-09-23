@@ -52,7 +52,7 @@ prom_admin_password: "ваш_пароль_для_prometheus"
 exporter_user: "ваш_логин_для_exporters"
 exporter_password: "ваш_пароль_для_exporters"
 
-domen: "ваш_домен" # Удалите строку, если нет.
+domain: "ваш_домен" # Удалите строку, если нет.
 email: "ваш_email"
 
 telegram_bot_token: "токен_вашего_бота"
