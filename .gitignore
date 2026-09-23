@@ -20,3 +20,5 @@ override.tf.json
 .vault_pass.txt
 inventory.ini
 host_vars/
+
+*Zone*
